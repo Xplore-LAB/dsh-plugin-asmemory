@@ -1,31 +1,93 @@
 # asmemory — Action-State Memory Engine
 
-> Turn an agent's actions and states into typed time-series memory, then analyze **trends, anomalies, and causality**.
+> Give your agent a **time memory**: record what *happened* and what *changed*, then analyze **trends, anomalies, and causality** — not just what was said.
 
 **Language:** English | [简体中文](README.zh.md)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![DSH Plugin](https://img.shields.io/badge/DeepSeek_Harness-plugin-blueviolet.svg)](#)
 [![Zero dependencies](https://img.shields.io/badge/dependencies-zero-green.svg)](#)
+[![Verified on DSH](https://img.shields.io/badge/verified-DSH_headless-00b894.svg)](#verified)
 
-A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) MCP plugin that gives an agent a *time memory* — it records what happened and what changed, instead of just what was said.
+> ⭐ If this helps you, a **star** is the best way to say thanks — it keeps the project visible to others.
+
+---
 
 ## What it does
 
-asmemory stores two kinds of typed events, not raw text:
+asmemory stores two kinds of **typed events**, not raw text:
 
 - **State** — a value of some entity/metric at a point in time (`gpu.temperature = 78°C`)
 - **Action** — something that happened (`agent ran training`, `operator adjusted a valve`)
 
-On top of this memory it provides four analyses: **trend**, **anomaly**, **causal**, and **summary**.
+On top of this memory it provides four analyses:
+
+| Analysis | Question it answers |
+|---|---|
+| **Trend** | Is my metric going up or down? (slope + direction) |
+| **Anomaly** | Which readings are outliers? (z-score) |
+| **Causal** | Did action X move metric Y? (before/after delta) |
+| **Summary** | What's in my memory? (counts + entities) |
 
 ## Why asmemory
 
 Most memory plugins store conversations or documents, so they answer *"what did you say"*. asmemory stores *actions and states*, so it answers *"what happened, and why"*:
 
-- "Did GPU temperature rise after training started?" → **causal**
-- "Is my sleep trending down this week?" → **trend**
-- "Which readings are outliers?" → **anomaly**
+> "Did GPU temperature rise after training started?" → **causal**
+> "Is my sleep trending down this week?" → **trend**
+> "Which readings are outliers?" → **anomaly**
+
+It is the memory layer for the *physical and operational* world — agents observing themselves, industrial processes, and personal metrics.
+
+## Example: agent self-tracking
+
+Record your agent's own actions and resource states, then ask *why* the GPU got hot:
+
+```python
+from asmemory import StateEvent, ActionEvent, MemoryStore, analysis
+
+store = MemoryStore("memory.db")
+store.add_state(StateEvent("gpu", "temperature", 78.5, "celsius"))
+store.add_action(ActionEvent("agent", "run_training", "qwen3.6", ts=1723500000))
+
+# Did training actually heat the GPU?
+causal = analysis.causal_effect(store, "run_training", "gpu", "temperature")
+print(causal["before_mean"], "->", causal["after_mean"], f"(Δ={causal['delta']})")
+```
+
+**Real output** (24h simulated agent, 72 states + 20 actions):
+
+```
+【因果】run_training → gpu.temperature:  45.3 → 78.7  (Δ=33.4, up)   ← significant
+【因果对照】git_commit → gpu.temperature: 53.7 → 56.4  (Δ=2.7, up)    ← no effect
+【异常】ram.usage: 1 outlier (z=-2.4)
+```
+
+The engine cleanly separates *real causality* (training) from *coincidence* (git commits) — no LLM guessing involved, just time-series math.
+
+## Example: industrial monitoring → DataLens
+
+Air-separation plant: oxygen purity (monitored metric) vs. valve opening (control action). asmemory remembers the causality, then exports to [DataLens](https://github.com/Xplore-LAB/DataLens) for over-control optimization:
+
+```python
+from asmemory.export import export_datalens
+
+export_datalens(store, entity="oxygen", metric="purity",
+                action_verb="valve_adjust",
+                pollutant="氧纯度", regulator="导叶开度",
+                regulatory_limit=99.5)
+# → data_datalens.csv + data_datalens.config.json
+```
+
+**Real output** (240 min, 240 states + 240 actions):
+
+```
+【因果】valve_adjust → oxygen.purity: Δ=0.0009 (up)
+✅ CSV → data_datalens.csv          (时间,指标值,控制量,整点标记)
+✅ config → data_datalens.config.json (pollutant/regulator/limit)
+```
+
+Open `data_datalens.csv` in DataLens to visualize the "still over-controlling in the safe zone" savings space.
 
 ## Tools
 
@@ -33,7 +95,7 @@ Seven MCP tools, exposed to the model as `mcp__asmemory__<tool>`:
 
 | Tool | What it does |
 |---|---|
-| `memory_store_state` | Record a state event (entity / metric / value / unit) |
+| `memory_store_state` | Record a state event (entity / metric / value / unit / tags) |
 | `memory_store_action` | Record an action event (actor / verb / object / amount) |
 | `memory_trend` | Trend direction + slope of a metric |
 | `memory_anomaly` | z-score outlier detection |
@@ -54,16 +116,17 @@ Seven MCP tools, exposed to the model as `mcp__asmemory__<tool>`:
 
 Persistence defaults to `~/.asmemory/memory.db` (override with `ASMEMORY_DB_PATH`).
 
+<a id="verified"></a>
+## Verified
+
+The full loop is tested end-to-end on a real DSH instance (headless profile + a local Qwen3.6 model): the agent called `memory_store_state`, `memory_store_action`, and `memory_summary`, and the events landed in SQLite — exactly the data it was asked to record.
+
 ## Quick start
 
 ```sh
 python3 examples/demo_agent_self_tracking.py   # agent self-tracking demo
 python3 examples/demo_datalens_export.py       # industrial → DataLens export demo
 ```
-
-## DataLens integration
-
-asmemory exports any "monitored metric + control action + regulatory limit" into a CSV + config that [DataLens](https://github.com/Xplore-LAB/DataLens) opens directly for over-control optimization analysis — memory for the causality, DataLens for the visualization.
 
 ## Use cases
 
@@ -73,4 +136,4 @@ asmemory exports any "monitored metric + control action + regulatory limit" into
 
 ## License
 
-MIT
+MIT — use it, fork it, ship it. And if it earns you a star-shaped reward in return, all the better. ⭐
