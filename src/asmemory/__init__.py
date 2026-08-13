@@ -6,6 +6,7 @@
 from .schema import StateEvent, ActionEvent
 from .store import MemoryStore
 from . import analysis
+from . import export
 
-__all__ = ["StateEvent", "ActionEvent", "MemoryStore", "analysis"]
+__all__ = ["StateEvent", "ActionEvent", "MemoryStore", "analysis", "export"]
 __version__ = "0.1.0"

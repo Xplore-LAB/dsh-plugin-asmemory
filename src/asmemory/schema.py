@@ -34,10 +34,11 @@ class StateEvent:
 
 @dataclass
 class ActionEvent:
-    """动作事件：actor 对 object 执行了 verb，可带元数据。"""
+    """动作事件：actor 对 object 执行了 verb，可带控制量 amount 与元数据。"""
     actor: str                  # 谁：agent / user / system ...
     verb: str                   # 做了什么：run_training / git_commit ...
     object: str = ""            # 对什么做：qwen3.6 / repo ...
+    amount: float = 0.0         # 控制量数值（喷氨量/功率/开度），非控制类动作填 0
     ts: float = field(default_factory=_now)
     metadata: Dict[str, Any] = field(default_factory=dict)
 

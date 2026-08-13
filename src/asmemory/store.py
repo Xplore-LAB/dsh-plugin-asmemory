@@ -37,6 +37,7 @@ class MemoryStore:
                 actor TEXT NOT NULL,
                 verb TEXT NOT NULL,
                 object TEXT DEFAULT '',
+                amount REAL DEFAULT 0,
                 ts REAL NOT NULL,
                 metadata TEXT DEFAULT '{}'
             )
@@ -59,8 +60,8 @@ class MemoryStore:
 
     def add_action(self, e: ActionEvent) -> int:
         cur = self.conn.execute(
-            "INSERT INTO actions(actor, verb, object, ts, metadata) VALUES (?,?,?,?,?)",
-            (e.actor, e.verb, e.object, e.ts, json.dumps(e.metadata, ensure_ascii=False)),
+            "INSERT INTO actions(actor, verb, object, amount, ts, metadata) VALUES (?,?,?,?,?,?)",
+            (e.actor, e.verb, e.object, e.amount, e.ts, json.dumps(e.metadata, ensure_ascii=False)),
         )
         self.conn.commit()
         return cur.lastrowid

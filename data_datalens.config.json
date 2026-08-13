@@ -1,0 +1,32 @@
+{
+  "siteName": "空分装置",
+  "section": "空分节能控制性能分析",
+  "pollutant": "氧纯度",
+  "pollutantUnit": "%",
+  "regulator": "导叶开度",
+  "regulatorShort": "导叶开度",
+  "regulatorUnit": "%",
+  "regulatoryLimit": 99.5,
+  "sliders": {
+    "trigger": {
+      "label": "氧纯度 触发线",
+      "val": 79.6,
+      "min": 69.65,
+      "max": 99.5,
+      "unit": "%"
+    },
+    "spray": {
+      "label": "控制识别阈值",
+      "val": 2,
+      "min": 0.5,
+      "max": 20
+    },
+    "discount": {
+      "label": "节约折扣系数",
+      "val": 15,
+      "min": 5,
+      "max": 30,
+      "unit": "%"
+    }
+  }
+}
