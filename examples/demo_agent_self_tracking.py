@@ -37,13 +37,13 @@ def simulate_agent_day(store: MemoryStore, hours: int = 24):
 
         # ---- 动作 ----
         if in_training and h % 1 == 0 and h in (0, 12):
-            store.add_action(ActionEvent("agent", "run_training", "qwen3.6", ts, {"duration_h": 4}))
+            store.add_action(ActionEvent("agent", "run_training", "qwen3.6", ts=ts, metadata={"duration_h": 4}))
         if h % 3 == 0:
-            store.add_action(ActionEvent("agent", "git_commit", "dsh-plugin-asmemory", ts, {"files": h % 5 + 1}))
+            store.add_action(ActionEvent("agent", "git_commit", "dsh-plugin-asmemory", ts=ts, metadata={"files": h % 5 + 1}))
         if h % 6 == 1:
-            store.add_action(ActionEvent("agent", "web_search", "docs", ts))
+            store.add_action(ActionEvent("agent", "web_search", "docs", ts=ts))
         if h % 4 == 2:
-            store.add_action(ActionEvent("agent", "idle", "", ts))
+            store.add_action(ActionEvent("agent", "idle", "", ts=ts))
 
 
 def main():
