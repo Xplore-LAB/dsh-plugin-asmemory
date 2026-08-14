@@ -105,14 +105,25 @@ export_datalens(store, entity="oxygen", metric="purity",
 
 ## 安装
 
-1. Clone 本仓库。
+server 通过 `asmemory-mcp` 命令运行（也可用 `ASMEMORY_MCP_PATH` 指向脚本绝对路径）。先安装命令，再把 MCP 桥接注册到 DSH。
+
+1. 安装 `asmemory-mcp` 命令：
+
+   ```sh
+   pip install .
+   ```
+
+   （或者跳过安装，直接设 `ASMEMORY_MCP_PATH=/path/to/bin/asmemory-mcp`。）
+
 2. 带插件 patch 启动 DSH：
 
    ```sh
    dsh web --patch "$PWD/cordis.yml"
    ```
 
-3. 完成。**无需 `pip install`、无需 `npm install`**——server 是单个 stdio 进程，只用 Python 3.10+ 标准库。
+   （包发布后，也可用 `dsh plugin add dsh-plugin-asmemory` 安装。）
+
+3. 完成。server 是单个 stdio 进程，只用 Python 3.10+ 标准库。
 
 持久化默认 `~/.asmemory/memory.db`（可用 `ASMEMORY_DB_PATH` 覆盖）。
 

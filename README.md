@@ -105,14 +105,25 @@ Seven MCP tools, exposed to the model as `mcp__asmemory__<tool>`:
 
 ## Installation
 
-1. Clone this repository.
+The server runs from the `asmemory-mcp` command (or an absolute path via `ASMEMORY_MCP_PATH`). Install the command first, then register the MCP bridge with DSH.
+
+1. Install the `asmemory-mcp` command:
+
+   ```sh
+   pip install .
+   ```
+
+   (Or skip the install and set `ASMEMORY_MCP_PATH=/path/to/bin/asmemory-mcp` instead.)
+
 2. Launch DSH with the plugin patch:
 
    ```sh
    dsh web --patch "$PWD/cordis.yml"
    ```
 
-3. Done. No `pip install`, no `npm install` — the server is a single stdio process using **only the Python 3.10+ standard library**.
+   (Once published, you can also run `dsh plugin add dsh-plugin-asmemory`.)
+
+3. Done. The server is a single stdio process using **only the Python 3.10+ standard library**.
 
 Persistence defaults to `~/.asmemory/memory.db` (override with `ASMEMORY_DB_PATH`).
 

@@ -1,12 +1,13 @@
 # asmemory 动作-状态记忆引擎 · DSH MCP 插件接入配置
 # 用法: dsh web --patch "$PWD/cordis.yml"
+# 前置: 先安装 asmemory-mcp 命令（pip install .），或设 ASMEMORY_MCP_PATH 指向脚本
 - insert:
     - id: mcp-asmemory
       name: '@deepseek-ai/dsh-mcp-client'
       config:
         serverName: asmemory
         transport: stdio
-        command: /home/lab434/dsh-plugin-asmemory/bin/asmemory-mcp
+        command: !!js process.env.ASMEMORY_MCP_PATH || 'asmemory-mcp'
         cwd: !!js process.cwd()
         env:
           ASMEMORY_DB_PATH: !!js process.env.ASMEMORY_DB_PATH?.trim() || (process.getBuiltinModule('node:path').join(process.getBuiltinModule('node:os').homedir(), '.asmemory', 'memory.db'))

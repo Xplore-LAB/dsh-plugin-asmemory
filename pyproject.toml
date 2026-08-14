@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "asmemory-mcp"
+version = "0.1.0"
+description = "Action-State Memory Engine: typed time-series memory (states + actions) with trend, anomaly, and causal analysis"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+keywords = ["mcp", "memory", "time-series", "anomaly-detection", "causal-analysis", "dsh", "dsh-plugin"]
+
+[project.scripts]
+asmemory-mcp = "asmemory.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
