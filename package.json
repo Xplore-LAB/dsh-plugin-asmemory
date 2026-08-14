@@ -1,0 +1,30 @@
+{
+  "name": "dsh-plugin-asmemory",
+  "version": "0.1.0",
+  "description": "Action-State Memory Engine: typed time-series memory (states + actions) with trend, anomaly, and causal analysis for DeepSeek Harness",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "memory",
+    "agent-memory",
+    "mcp",
+    "time-series",
+    "anomaly-detection",
+    "causal-analysis"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Xplore-LAB/dsh-plugin-asmemory.git"
+  },
+  "homepage": "https://github.com/Xplore-LAB/dsh-plugin-asmemory#readme",
+  "bugs": {
+    "url": "https://github.com/Xplore-LAB/dsh-plugin-asmemory/issues"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.yml"
+    }
+  }
+}
